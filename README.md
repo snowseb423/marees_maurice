@@ -15,16 +15,6 @@ L'application s'installe sur l'écran d'accueil, fonctionne hors ligne et se met
 | `scripts/update_tides.py` | Lit la page de Météo Maurice et met à jour `data/tides.json` |
 | `.github/workflows/update-tides.yml` | Lance le script le 1er de chaque mois |
 
-## Mise en ligne sur GitHub Pages (gratuit, ~10 minutes)
-
-1. Créez un compte sur github.com si besoin, puis un **nouveau dépôt public** (ex. `marees-maurice`).
-2. Dans le dépôt : **Add file → Upload files**, glissez **tout le contenu** du dossier
-   (y compris le dossier caché `.github` ; sur Mac, `Cmd+Maj+.` l'affiche dans le Finder), puis **Commit**.
-3. **Settings → Pages** : Source = *Deploy from a branch*, Branch = `main`, dossier `/ (root)` → **Save**.
-   L'adresse apparaît après une minute : `https://<votre-compte>.github.io/marees-maurice/`.
-4. **Settings → Actions → General → Workflow permissions** : cochez *Read and write permissions* → **Save**.
-5. Test : **Actions → Mise à jour des marées → Run workflow**. Un commit « Marées : mise à jour… » doit apparaître.
-
 ## Installer sur le téléphone
 
 - **iPhone (Safari)** : ouvrir l'adresse → bouton Partager → *Sur l'écran d'accueil*.
