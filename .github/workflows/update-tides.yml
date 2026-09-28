@@ -1,0 +1,40 @@
+name: Mise à jour des marées
+
+on:
+  schedule:
+    # Le 1er de chaque mois à 03:00 UTC (07:00 à Maurice)
+    - cron: "0 3 1 * *"
+  workflow_dispatch: {}   # bouton « Run workflow » pour lancer à la main
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Récupérer les prédictions de Météo Maurice
+        id: fetch
+        continue-on-error: true
+        run: python scripts/update_tides.py
+
+      - name: Publier les nouvelles données
+        run: |
+          git config user.name "marees-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/tides.json
+          git diff --cached --quiet && exit 0
+          git commit -m "Marées : mise à jour du $(date -u +%Y-%m-%d)"
+          git push
+
+      - name: Signaler un échec de lecture
+        if: steps.fetch.outcome == 'failure'
+        run: |
+          echo "::error::La page de Météo Maurice n'a pas pu être lue. Les données existantes sont conservées."
+          exit 1
