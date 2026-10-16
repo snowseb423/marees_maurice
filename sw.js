@@ -1,12 +1,14 @@
 // Service worker — Marées Maurice
 // Coquille de l'app : servie depuis le cache, rafraîchie en arrière-plan.
-// Données (data/tides.json) : réseau d'abord, cache si hors ligne.
-const VERSION = "marees-v1";
+// Données (data/*.json) : réseau d'abord, cache si hors ligne.
+const VERSION = "marees-v3";
 const SHELL = [
   "./",
   "index.html",
+  "astro.js",
   "manifest.webmanifest",
   "data/tides.json",
+  "data/sun_moon.json",
   "icons/icon-192.png",
   "icons/icon-512.png",
   "icons/apple-touch-icon.png",
@@ -51,7 +53,7 @@ self.addEventListener("fetch", (e) => {
   if (req.method !== "GET") return;
   const url = new URL(req.url);
 
-  if (url.origin === location.origin && url.pathname.endsWith("/data/tides.json")) {
+  if (url.origin === location.origin && /\/data\/[^/]+\.json$/.test(url.pathname)) {
     e.respondWith(networkFirst(req));
   } else if (url.hostname === "fonts.googleapis.com" || url.hostname === "fonts.gstatic.com") {
     e.respondWith(staleWhileRevalidate(req, "fonts"));

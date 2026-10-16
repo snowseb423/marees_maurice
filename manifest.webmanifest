@@ -1,7 +1,7 @@
 {
   "name": "Marées à Maurice",
   "short_name": "Marées",
-  "description": "Horaires et hauteurs des marées à l'île Maurice, d'après les prédictions de Météo Maurice.",
+  "description": "Marées, lever et coucher du soleil et de la lune, phases de la Lune à l'île Maurice, d'après Météo Maurice.",
   "lang": "fr",
   "start_url": "./",
   "scope": "./",
