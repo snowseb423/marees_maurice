@@ -1,4 +1,4 @@
-name: Mise à jour des marées
+name: Mise à jour des marées, du soleil et de la lune
 
 on:
   schedule:
@@ -19,22 +19,27 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Récupérer les prédictions de Météo Maurice
-        id: fetch
+      - name: Récupérer les marées (Météo Maurice)
+        id: tides
         continue-on-error: true
         run: python scripts/update_tides.py
+
+      - name: Récupérer soleil, lune et phases (Météo Maurice)
+        id: sunmoon
+        continue-on-error: true
+        run: python scripts/update_sun_moon.py
 
       - name: Publier les nouvelles données
         run: |
           git config user.name "marees-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/tides.json
+          git add data/
           git diff --cached --quiet && exit 0
-          git commit -m "Marées : mise à jour du $(date -u +%Y-%m-%d)"
+          git commit -m "Données : mise à jour du $(date -u +%Y-%m-%d)"
           git push
 
       - name: Signaler un échec de lecture
-        if: steps.fetch.outcome == 'failure'
+        if: steps.tides.outcome == 'failure' || steps.sunmoon.outcome == 'failure'
         run: |
-          echo "::error::La page de Météo Maurice n'a pas pu être lue. Les données existantes sont conservées."
+          echo "::error::Une page de Météo Maurice n'a pas pu être lue (détail dans les étapes ci-dessus). Les données existantes sont conservées."
           exit 1
