@@ -23,7 +23,7 @@
   --accent:#0B7285; --accent-soft:rgba(11,114,133,.14); --high:#1D5FA8; --low:#A86A12;
   --now:#D6453D; --sel:#0B7285;
   --sun:#D97706; --sun-soft:rgba(217,119,6,.14); --moon:#6A72B8;
-  --moon-dark:#1E3442; --moon-rim:#3A5566; --moon-lit:#F4EBCB;
+  --moon-dark:#1E3442; --moon-rim:#3A5566; --moon-lit:#F4EBCB; --shade:rgba(13,35,48,.07);
   --f-display:"Sora",system-ui,sans-serif; --f-body:"IBM Plex Sans",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 }
 @media (prefers-color-scheme: dark){
@@ -31,14 +31,14 @@
     color-scheme:dark;
     --bg:#071820; --surface:#0E2430; --surface-2:#12303D; --ink:#E4EFF2; --muted:#8EA7B2; --line:#1F3B48;
     --accent:#45BCC8; --accent-soft:rgba(69,188,200,.16); --high:#79AEF0; --low:#E3AC52; --now:#FF6B61; --sel:#45BCC8;
-    --sun:#FBBF24; --sun-soft:rgba(251,191,36,.16); --moon:#AEB8F0; --moon-dark:#04121A; --moon-rim:#2E4A58;
+    --sun:#FBBF24; --sun-soft:rgba(251,191,36,.16); --moon:#AEB8F0; --moon-dark:#04121A; --moon-rim:#2E4A58; --shade:rgba(0,0,0,.28);
   }
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
   --bg:#071820; --surface:#0E2430; --surface-2:#12303D; --ink:#E4EFF2; --muted:#8EA7B2; --line:#1F3B48;
   --accent:#45BCC8; --accent-soft:rgba(69,188,200,.16); --high:#79AEF0; --low:#E3AC52; --now:#FF6B61; --sel:#45BCC8;
-  --sun:#FBBF24; --sun-soft:rgba(251,191,36,.16); --moon:#AEB8F0; --moon-dark:#04121A; --moon-rim:#2E4A58;
+  --sun:#FBBF24; --sun-soft:rgba(251,191,36,.16); --moon:#AEB8F0; --moon-dark:#04121A; --moon-rim:#2E4A58; --shade:rgba(0,0,0,.28);
 }
 *{box-sizing:border-box}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -91,6 +91,14 @@ svg{display:block;width:100%;height:auto}
 .grid{stroke:var(--line);stroke-width:1}
 .zero{stroke:var(--muted);stroke-dasharray:3 4;stroke-width:1;opacity:.6}
 .lbl{font-family:var(--f-mono);font-size:12px;font-weight:500}
+.night{fill:var(--shade)}
+.track{stroke:var(--surface-2);stroke-width:6;stroke-linecap:round}
+.up{stroke-width:6;stroke-linecap:round}
+.up.sun,.sun-dot{stroke:var(--sun);fill:var(--sun)}
+.up.moon{stroke:var(--moon)}
+.strip-lbl{font-size:10.5px;fill:var(--ink)}
+.calc{font-style:italic}
+.calc-tag{font-style:normal;font-family:var(--f-body);font-size:11px;font-weight:600;letter-spacing:.02em;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 7px;white-space:nowrap;cursor:help}
 .today-btn{font:inherit;font-size:13px;border:0;background:none;color:var(--accent);cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:3px}
 
 /* Table */
@@ -103,7 +111,7 @@ svg{display:block;width:100%;height:auto}
 .chip[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
 .count{font-size:13px;color:var(--muted);padding:0 16px 8px}
 .scroll{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;min-width:560px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;min-width:720px}
 th{font-family:var(--f-mono);font-weight:500;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
 th.H{color:var(--high)} th.L{color:var(--low)}
 td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
@@ -116,6 +124,15 @@ tr.today td:first-child{box-shadow:inset 3px 0 0 var(--now)}
 .d b{font-family:var(--f-display);font-size:17px;font-weight:600;margin-right:4px}
 .d span{color:var(--muted);font-size:13px}
 .d em{font-style:normal;font-size:11px;font-weight:600;color:var(--now);margin-left:6px;text-transform:uppercase;letter-spacing:.05em}
+.tag{display:block;width:max-content;margin-top:2px;font-size:11px;font-weight:600;line-height:1.5;padding:0 7px;border-radius:999px}
+.tag.VE{color:var(--high);background:color-mix(in srgb,var(--high) 14%,transparent)}
+.tag.ME{color:var(--muted);background:var(--surface-2)}
+th.S{color:var(--sun)} th.M{color:var(--moon)}
+.c.calc .t{font-style:italic;color:var(--muted)}
+.mc{white-space:nowrap}
+.mc .moon{display:inline-block;vertical-align:middle;margin-right:7px}
+.mc span{font-family:var(--f-mono);font-size:13px;vertical-align:middle}
+.mc.calc span{font-style:italic;color:var(--muted)}
 .c .t{font-family:var(--f-mono);font-size:14px;font-weight:500}
 .c .h{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
 .c.na{color:var(--muted);opacity:.5}
@@ -169,7 +186,19 @@ tr.today td:first-child{box-shadow:inset 3px 0 0 var(--now)}
 .luna-mark{position:absolute;top:5px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:5px;font-family:var(--f-mono);font-size:11px;color:var(--muted);white-space:nowrap}
 .luna-mark .moon{display:block}
 .luna-now{position:absolute;top:12px;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--now);box-shadow:0 0 0 2px var(--surface)}
-.est{font-style:normal;font-weight:400;color:var(--muted)}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;padding:10px 14px 4px}
+.cal-wd{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:center;padding-bottom:4px}
+.cal-day{font:inherit;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;padding:7px 2px 6px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);cursor:pointer}
+.cal-day:disabled{cursor:default;background:none;border-color:transparent}
+.cal-day:not(:disabled):hover{border-color:var(--accent)}
+.cal-day.ve{background:color-mix(in srgb,var(--high) 15%,var(--surface))}
+.cal-day.sel{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.cal-day.today{border-color:var(--now);box-shadow:inset 0 0 0 1px var(--now)}
+.cal-day .n{font-family:var(--f-display);font-weight:600;font-size:14px;line-height:1}
+.cal-day .p{font-family:var(--f-mono);font-size:10.5px;line-height:1.2;min-height:1.2em;color:var(--muted);white-space:nowrap}
+.cal-day .p i{font-style:normal}
+.cal-legend{display:flex;flex-wrap:wrap;gap:4px 16px;padding:8px 16px 14px;font-size:12.5px;color:var(--muted)}
+.cal-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px;border:1px solid var(--line)}
 
 @media (max-width:860px){
   .phase{grid-template-columns:1fr}
@@ -185,6 +214,9 @@ tr.today td:first-child{box-shadow:inset 3px 0 0 var(--now)}
   .bigh{font-size:46px}
 }
 @media (max-width:520px){
+  .cal{gap:3px;padding:8px 8px 2px}
+  .cal-day{padding:6px 0 5px}
+  .cal-day .p i{display:none}
   .quad{grid-template-columns:1fr;gap:8px}
   .quad>div{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:12px}
   .quad>div>span{grid-row:span 2}
@@ -223,6 +255,16 @@ tr.today td:first-child{box-shadow:inset 3px 0 0 var(--now)}
   </div>
   <section class="panel phase" id="phase" aria-label="Phase de la Lune"></section>
 
+  <section class="panel" id="calPanel" aria-label="Calendrier lunaire">
+    <div class="chart-head">
+      <button class="navbtn" id="calPrev" aria-label="Mois précédent">‹</button>
+      <div class="chart-title" id="calTitle"></div>
+      <button class="navbtn" id="calNext" aria-label="Mois suivant">›</button>
+    </div>
+    <div class="cal" id="cal"></div>
+    <div class="cal-legend"><span><i style="background:color-mix(in srgb,var(--high) 15%,var(--surface))"></i>vives-eaux</span><span><i style="border-color:var(--now)"></i>aujourd'hui</span><span>NL nouvelle lune · PQ premier quartier · PL pleine lune · DQ dernier quartier</span><span>Touchez un jour pour voir ses marées.</span></div>
+  </section>
+
   <section class="panel">
     <div class="tbl-head">
       <div class="seg" role="group" aria-label="Mois">
@@ -240,7 +282,7 @@ tr.today td:first-child{box-shadow:inset 3px 0 0 var(--now)}
           <th>Jour</th>
           <th class="H">Pleine mer 1</th><th class="H">Pleine mer 2</th>
           <th class="L">Basse mer 1</th><th class="L">Basse mer 2</th>
-          <th>Marnage</th>
+          <th>Marnage</th><th class="S">Soleil</th><th class="M">Lune</th>
         </tr></thead>
         <tbody id="tbody"></tbody>
       </table>
@@ -248,11 +290,12 @@ tr.today td:first-child{box-shadow:inset 3px 0 0 var(--now)}
   </section>
 
   <p class="note">Hauteurs en centimètres au-dessus du zéro hydrographique ; une valeur négative signifie que la mer descend sous ce niveau de référence. La courbe entre deux extrêmes est une interpolation (sinusoïde) : les heures et hauteurs publiées font foi. Touchez une ligne du tableau pour afficher la courbe du jour.</p>
-  <p class="note">Lever et coucher du <a href="https://metservice.intnet.mu/sun-moon-and-tides-sunrise-sunset-mauritius.php" target="_blank" rel="noopener">soleil</a> et de la <a href="https://metservice.intnet.mu/sun-moon-and-tides-moonrise-moonset-mauritius.php" target="_blank" rel="noopener">lune</a>, heures des <a href="https://metservice.intnet.mu/sun-moon-and-tides-moon-phase.php" target="_blank" rel="noopener">phases</a> : Météo Maurice, heure locale. Le pourcentage d'illumination est estimé à partir des heures des phases (à environ 2 % près) ; les dates précédées de ≈ sont extrapolées hors de la période publiée. La Lune est dessinée telle qu'on la voit depuis l'hémisphère sud : croissante, elle est éclairée à gauche.</p>
+  <p class="note">Lever et coucher du <a href="https://metservice.intnet.mu/sun-moon-and-tides-sunrise-sunset-mauritius.php" target="_blank" rel="noopener">soleil</a> et de la <a href="https://metservice.intnet.mu/sun-moon-and-tides-moonrise-moonset-mauritius.php" target="_blank" rel="noopener">lune</a>, heures des <a href="https://metservice.intnet.mu/sun-moon-and-tides-moon-phase.php" target="_blank" rel="noopener">phases</a> : Météo Maurice, heure locale. Hors de la période publiée, ces valeurs sont calculées (en général une minute d'écart au plus avec celles de Météo Maurice) et signalées « calculé » ou en italique. Le pourcentage d'illumination est estimé à partir des heures des phases (à environ 2 % près). Vives-eaux : les trois jours de plus fort marnage autour de chaque nouvelle et pleine lune ; mortes-eaux : la veille, le jour et le lendemain de chaque quartier. Sur la courbe, la nuit est grisée. La Lune est dessinée telle qu'on la voit depuis l'hémisphère sud : croissante, elle est éclairée à gauche.</p>
 </div>
 
+<script src="astro.js"></script>
 <script>
-// Données : data/tides.json, mis à jour chaque mois par GitHub Actions.
+// Données : data/tides.json, mis à jour le 1er et le 15 de chaque mois par GitHub Actions.
 // Format d'une ligne : [jour, PM1 heure, PM1 cm, PM2 heure, PM2 cm, BM1 heure, BM1 cm, BM2 heure, BM2 cm]
 
 const MU = 4*3600e3, DAY = 864e5;
@@ -322,6 +365,7 @@ function renderNow(){
       <div class="state"><span class="arrow" aria-hidden="true">${rising?"↑":"↓"}</span>Marée ${rising?"montante":"descendante"}</div>
       <div class="bigh">≈ ${Math.round(h)}<small>cm</small></div>
       ${nxt?`<div class="next">${typeLabel(nxt.type)} à <b>${nxt.time}</b> (${nxt.h} cm)${nxt.day!==tk?" demain":""}, dans <b>${fmtDur(nxt.t-now)}</b></div>`:""}
+      ${skyState!=="loading" ? springLine() : ""}
     </div>
     <div class="now-list">
       <h3>Aujourd'hui · ${WDL[weekday(rec)]} ${rec.d} ${MO[pad(rec.m)]}</h3>
@@ -330,25 +374,35 @@ function renderNow(){
 }
 
 /* ---------- Chart ---------- */
-let W=720,H=260;const PL=38,PR=14,PT=26,PB=30, YMIN=-10, YMAX=80;
+let W=720,H=300;const PL=38,PR=14,PT=26,PB=70, YMIN=-10, YMAX=80; // PB : heures + bandes soleil et lune
 const X = (t,start) => PL + (t-start)/DAY*(W-PL-PR);
 const Y = h => PT + (YMAX-h)/(YMAX-YMIN)*(H-PT-PB);
 
 function renderChart(){
   const rec=days[dayIndex[selected]], start=rec.start, end=start+DAY;
   const svg=document.getElementById("chart");
-  W=Math.round(Math.max(340,Math.min(900,svg.clientWidth||720))); H=W<520?230:260;
+  W=Math.round(Math.max(340,Math.min(900,svg.clientWidth||720))); H=W<520?270:300;
   svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
   const tk=todayKey();
-  const isToday = selected===tk;
+  const isToday = selected===tk, astro = skyState!=="loading";
+  const season = astro && tideSeasons().byDay[selected], dp = astro ? dayPhase(selected) : {E:null};
+  const moonTxt = dp.E==null ? "" : dp.ph ? ` · ${PH_NAME[dp.ph.code].toLowerCase()} à ${dp.ph.time}` : ` · lune : ${phaseName(dp.E).toLowerCase()}, ${Math.round(illum(dp.E)*100)} %`;
+  const calc = astro && (riseSetDay("sun",selected).calc || riseSetDay("moon",selected).calc);
   document.getElementById("chartTitle").innerHTML =
-    `${WDL[weekday(rec)]} ${rec.d} ${MO[pad(rec.m)]}<span>${isToday?"Aujourd'hui":`<button class="today-btn" id="goToday">Revenir à aujourd'hui</button>`}${rec.range!=null?` · marnage ${rec.range} cm`:""}</span>`;
+    `${WDL[weekday(rec)]} ${rec.d} ${MO[pad(rec.m)]}<span>${isToday?"Aujourd'hui":`<button class="today-btn" id="goToday">Revenir à aujourd'hui</button>`}${rec.range!=null?` · marnage ${rec.range} cm`:""}${season?` · ${SEASON[season]}`:""}${moonTxt}${calc?` · <span class="calc" title="Période non publiée par Météo Maurice : valeurs calculées">soleil et lune calculés</span>`:""}</span>`;
   const gt=document.getElementById("goToday");
   if (gt){ if (dayIndex[tk]==null) gt.remove(); else gt.onclick=()=>select(tk,true); }
   document.getElementById("prev").disabled = dayIndex[selected]===0;
   document.getElementById("next").disabled = dayIndex[selected]===days.length-1;
 
   let s="";
+  const sun = astro && dayCourse("sun", selected);
+  if (sun && sun.segs.length) { // nuit : du coucher au lever du soleil
+    let t0=start;
+    const night=(a,b)=>`<rect class="night" x="${X(a,start).toFixed(1)}" y="${PT}" width="${(X(b,start)-X(a,start)).toFixed(1)}" height="${Y(YMIN)-PT}"/>`;
+    for (const [a,b] of sun.segs){ if (a>t0) s+=night(t0,a); t0=b; }
+    if (t0<end) s+=night(t0,end);
+  }
   for (const g of [0,20,40,60]) {
     s+=`<line class="${g===0?"zero":"grid"}" x1="${PL}" x2="${W-PR}" y1="${Y(g)}" y2="${Y(g)}"/>`;
     s+=`<text class="axis" x="${PL-6}" y="${Y(g)+4}" text-anchor="end">${g}</text>`;
@@ -357,7 +411,7 @@ function renderChart(){
   for (let hr=0; hr<=24; hr+=3){
     const x=X(start+hr*36e5,start);
     s+=`<line class="grid" x1="${x}" x2="${x}" y1="${Y(YMIN)}" y2="${Y(YMIN)+4}"/>`;
-    s+=`<text class="axis" x="${x}" y="${H-10}" text-anchor="${hr===0?"start":hr===24?"end":"middle"}">${pad(hr%24)}h</text>`;
+    s+=`<text class="axis" x="${x}" y="${Y(YMIN)+18}" text-anchor="${hr===0?"start":hr===24?"end":"middle"}">${pad(hr%24)}h</text>`;
   }
   // curve
   const pts=[];
@@ -377,12 +431,28 @@ function renderChart(){
     s+=`<circle cx="${x}" cy="${y}" r="5" fill="var(--surface)" stroke="${col}" stroke-width="2.5"/>`;
     s+=`<text class="lbl" x="${x}" y="${ly}" text-anchor="${anchor}" fill="${col}">${e.time} · ${e.h} cm</text>`;
   }
+  // Bandes : périodes où le soleil et la lune sont levés, avec les heures de lever (↑) et de coucher (↓)
+  if (astro) {
+    const strip=(body, y, icon)=>{
+      const dc=dayCourse(body, selected);
+      let t=`${icon}<line class="track" x1="${PL}" x2="${W-PR}" y1="${y}" y2="${y}"/>`;
+      for (const [a,b] of dc.segs) t+=`<line class="up ${body}" x1="${X(a,start).toFixed(1)}" x2="${X(b,start).toFixed(1)}" y1="${y}" y2="${y}"/>`;
+      for (const e of dc.events){
+        const x=X(e.t,start), anchor=x<PL+26?"start":x>W-PR-26?"end":"middle";
+        t+=`<text class="axis strip-lbl${dc.calc?" calc":""}" x="${x.toFixed(1)}" y="${y-7}" text-anchor="${anchor}">${e.type==="rise"?"↑":"↓"} ${e.time}</text>`;
+      }
+      return t;
+    };
+    const ys=Y(YMIN)+42, ym=Y(YMIN)+64;
+    s+=strip("sun", ys, `<circle class="sun-dot" cx="${PL-20}" cy="${ys}" r="5"><title>Soleil</title></circle>`);
+    s+=strip("moon", ym, dp.E==null ? "" : `<g class="moon" transform="translate(${PL-27} ${ym-7}) scale(.35)"><title>Lune</title>${moonDisc(dp.E)}</g>`);
+  }
   // now marker
   const now=muNow();
   if (now>=start && now<end){
     const h=heightAt(now);
     const x=X(now,start);
-    s+=`<line x1="${x}" x2="${x}" y1="${PT-6}" y2="${Y(YMIN)}" stroke="var(--now)" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+    s+=`<line x1="${x}" x2="${x}" y1="${PT-6}" y2="${astro?Y(YMIN)+68:Y(YMIN)}" stroke="var(--now)" stroke-width="1.5" stroke-dasharray="4 3"/>`;
     if (h!=null) s+=`<circle cx="${x}" cy="${Y(h)}" r="6" fill="var(--now)" stroke="var(--surface)" stroke-width="2"/>`;
     s+=`<text class="lbl" x="${x}" y="${PT-10}" text-anchor="${x>W-80?"end":x<PL+40?"start":"middle"}" fill="var(--now)">maintenant</text>`;
   }
@@ -393,104 +463,175 @@ function renderChart(){
 function cell(pair){
   return pair[0] ? `<td class="c"><div class="t">${pair[0]}</div><div class="h">${pair[1]} cm</div></td>` : `<td class="c na">—</td>`;
 }
+function astroCells(d){
+  const r=riseSetDay("sun",d.key), {E,ph}=dayPhase(d.key), pc=!pub.phaseMonths.has(d.month);
+  const sun=`<td class="c${r.calc?" calc":""}"${r.calc?` title="Valeurs calculées"`:""}><div class="t">↑ ${r.rise??"—"}</div><div class="t">↓ ${r.set??"—"}</div></td>`;
+  const moon = E==null ? `<td class="c na">—</td>` : `<td class="mc${pc?" calc":""}" title="${phaseName(E,ph)}${pc?" (calculé)":""}">${moonSvg(E,18)}<span>${ph?`<b>${PH_SHORT[ph.code]}</b> ${ph.time}`:`${Math.round(illum(E)*100)} %`}</span></td>`;
+  return {html:sun+moon, calc:r.calc||pc};
+}
 function renderTable(){
-  const tk=todayKey();
+  const tk=todayKey(), astro=skyState!=="loading", seasons=astro ? tideSeasons().byDay : {};
   const list=days.filter(d=>d.month===month).filter(d=>
     filter==="all" ? true : filter==="spring" ? (d.range!=null && d.range>=60) : (d.minL!=null && d.minL<=5));
-  document.getElementById("count").textContent =
-    filter==="all" ? `${list.length} jours` : `${list.length} jour${list.length>1?"s":""} correspondant${list.length>1?"s":""}`;
   const tb=document.getElementById("tbody");
-  if (!list.length){ tb.innerHTML=`<tr><td colspan="6" class="empty">Aucun jour ne correspond à ce filtre ce mois-ci.</td></tr>`; return; }
-  tb.innerHTML=list.map(d=>{
-    const lo=d.minL??0, hi=d.maxH??0;
+  let calc=false;
+  tb.innerHTML = list.length ? list.map(d=>{
+    const lo=d.minL??0, hi=d.maxH??0, se=seasons[d.key], ac=astro ? astroCells(d) : {html:"<td></td><td></td>"};
     const l=(lo-YMIN)/(YMAX-YMIN)*100, w=Math.max(2,(hi-lo)/(YMAX-YMIN)*100);
+    calc ||= ac.calc;
     return `<tr tabindex="0" data-k="${d.key}" class="${d.key===tk?"today ":""}${d.key===selected?"sel":""}">
-      <td class="d"><b>${d.d}</b><span>${WD[weekday(d)]}</span>${d.key===tk?"<em>auj.</em>":""}</td>
+      <td class="d"><b>${d.d}</b><span>${WD[weekday(d)]}</span>${d.key===tk?"<em>auj.</em>":""}${se?`<small class="tag ${se}">${SEASON[se]}</small>`:""}</td>
       ${cell(d.H[0])}${cell(d.H[1])}${cell(d.L[0])}${cell(d.L[1])}
       <td>${d.range!=null?`<div class="range"><div class="bar"><i style="left:${l}%;width:${w}%"></i></div><span>${d.range} cm</span></div>`:`<span class="c na">—</span>`}</td>
-    </tr>`;}).join("");
+      ${ac.html}
+    </tr>`;}).join("") : `<tr><td colspan="8" class="empty">Aucun jour ne correspond à ce filtre ce mois-ci.</td></tr>`;
+  document.getElementById("count").textContent =
+    (filter==="all" ? `${list.length} jours` : `${list.length} jour${list.length>1?"s":""} correspondant${list.length>1?"s":""}`)
+    + (calc ? " · soleil et lune en italique : valeurs calculées (période non publiée par Météo Maurice)" : "");
 }
 
 /* ---------- Soleil et lune ---------- */
-// Données : data/sun_moon.json (Météo Maurice), mis à jour chaque mois avec les marées.
+// Données : data/sun_moon.json (Météo Maurice), mis à jour avec les marées le 1er et le 15 de chaque mois.
 // sun, moon : { "AAAA-MM": [[jour, lever, coucher], …] } — null : pas de lever ou de coucher ce jour-là
 // phases : { "AAAA-MM": [[jour, heure, "NM" | "FQ" | "FM" | "LQ"], …] }
+// Hors de la période publiée, astro.js calcule les mêmes valeurs ; elles sont signalées « calculé ».
 const SYN = 29.530589*DAY;                    // mois synodique moyen
 const PH_E = {NM:0, FQ:90, FM:180, LQ:270};   // élongation Lune–Soleil de chaque phase (degrés)
 const PH_NAME = {NM:"Nouvelle lune", FQ:"Premier quartier", FM:"Pleine lune", LQ:"Dernier quartier"};
+const PH_SHORT = {NM:"NL", FQ:"PQ", FM:"PL", LQ:"DQ"};
 const MOS = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
-let sky = {sun:[], moon:[], phases:[], sunDay:{}, moonDay:{}}, skyState = "loading";
+const CALC = `<i class="calc-tag" title="Période non publiée par Météo Maurice : valeurs calculées">calculé</i>`;
+let pub = {sun:{}, moon:{}, phases:[], phaseMonths:new Set()}, skyState = "loading", memo = new Map(), seasonsCache = null;
+const cached = (k, f) => { if (!memo.has(k)) memo.set(k, f()); return memo.get(k); };
+const parts = key => key.split("-").map(Number);
+const addDays = (key, n) => muKey(dayStartMs(...parts(key)) + (n+.5)*DAY);
+const nextMonth = (k, n=1) => { const [y,m]=parts(k), i=y*12+m-1+n; return `${Math.floor(i/12)}-${pad(i%12+1)}`; };
 
 function buildSky(data){
-  const riseSet = src => {
-    const ev=[], byDay={};
-    for (const key of Object.keys(src||{}).sort()) {
-      const [y,m]=key.split("-").map(Number);
-      for (const [d,rise,set] of src[key]) {
-        byDay[`${key}-${pad(d)}`]={rise,set};
-        if (rise) ev.push({t:toMs(y,m,d,rise), type:"rise", time:rise});
-        if (set) ev.push({t:toMs(y,m,d,set), type:"set", time:set});
-      }
-    }
-    return [ev.sort((a,b)=>a.t-b.t), byDay];
-  };
-  [sky.sun, sky.sunDay] = riseSet(data.sun);
-  [sky.moon, sky.moonDay] = riseSet(data.moon);
-  sky.phases = [];
-  for (const key of Object.keys(data.phases||{}).sort()) {
-    const [y,m]=key.split("-").map(Number);
-    for (const [d,time,code] of data.phases[key]) sky.phases.push({t:toMs(y,m,d,time), time, code, day:`${key}-${pad(d)}`});
+  pub = {sun:{}, moon:{}, phases:[], phaseMonths:new Set(Object.keys(data.phases||{}))};
+  for (const body of ["sun","moon"])
+    for (const [key,rows] of Object.entries(data[body]||{}))
+      for (const [d,rise,set] of rows) pub[body][`${key}-${pad(d)}`] = {rise, set};
+  for (const [key,rows] of Object.entries(data.phases||{})) {
+    const [y,m]=parts(key);
+    for (const [d,time,code] of rows) pub.phases.push({t:toMs(y,m,d,time), code, calc:false});
   }
-  sky.phases.sort((a,b)=>a.t-b.t);
+  memo.clear(); seasonsCache = null;
+}
+
+// Lever et coucher d'un jour : Météo Maurice si publié, sinon calcul astronomique (calc)
+function riseSetDay(body, key){
+  const p = pub[body][key];
+  if (p) return {...p, calc:false};
+  return cached(body+key, () => window.Astro ? {...Astro.riseSet(body, ...parts(key)), calc:true} : {rise:null, set:null, calc:true});
+}
+// Levers et couchers successifs, de `before` jours avant à `after` jours après le jour de t
+function bodyEvents(body, t, before=2, after=2){
+  const ev=[];
+  for (let i=-before; i<=after; i++) {
+    const key=muKey(t+i*DAY), r=riseSetDay(body,key), [y,m,d]=parts(key);
+    for (const type of ["rise","set"]) if (r[type]) ev.push({t:toMs(y,m,d,r[type]), type, time:r[type], calc:r.calc});
+  }
+  return ev.sort((a,b)=>a.t-b.t);
+}
+// Phases entre deux instants : Météo Maurice pour les mois publiés, calcul pour les autres
+function phaseList(from, to){
+  const out = pub.phases.filter(p=>p.t>=from && p.t<=to);
+  for (let k=muKey(from).slice(0,7); window.Astro && k<=muKey(to).slice(0,7); k=nextMonth(k)) {
+    if (pub.phaseMonths.has(k)) continue;
+    const [y,m]=parts(k);
+    for (const p of cached("ph"+k, () => Astro.phases(dayStartMs(y,m,1), dayStartMs(y,m+1,1)-1)))
+      if (p.t>=from && p.t<=to && !out.some(o=>o.code===p.code && Math.abs(o.t-p.t)<DAY/2)) out.push({...p, calc:true});
+  }
+  return out.sort((a,b)=>a.t-b.t).map(p=>({...p, time:hhmm(p.t), day:muKey(p.t)}));
 }
 
 // Course en cours : levé (du dernier lever au prochain coucher) ou couché (du dernier coucher au prochain lever)
-function course(ev, now){
+function course(body, now){
+  const ev=bodyEvents(body, now);
   let i=-1; while (i+1<ev.length && ev[i+1].t<=now) i++;
-  const prev=ev[i], next=ev[i+1];
-  if (!prev || !next || next.t-prev.t > 20*36e5) return null; // hors période ou trou dans les données
-  const to=ev.slice(i+1).find(e=>e.type!==prev.type);
+  const prev=ev[i], to=prev && ev.slice(i+1).find(e=>e.type!==prev.type);
   return to ? {up:prev.type==="rise", from:prev, to} : null;
 }
-
-// Élongation estimée (0° à la nouvelle lune, 180° à la pleine lune) : interpolation entre deux phases
-// publiées, extrapolation au mois synodique moyen hors de la période.
-function elongation(t){
-  const ev=sky.phases; if (!ev.length) return null;
-  let i=-1; while (i+1<ev.length && ev[i+1].t<=t) i++;
-  if (i>=0 && i<ev.length-1){
-    const a=ev[i], b=ev[i+1];
-    let d=(PH_E[b.code]-PH_E[a.code]+360)%360 || 360;
-    d += 360*Math.round(((b.t-a.t)/SYN*360-d)/360); // phases manquantes entre a et b
-    return {E:(PH_E[a.code]+d*(t-a.t)/(b.t-a.t))%360, est:false};
+// Périodes où l'astre est levé pendant un jour, et ses levers et couchers ce jour-là
+function dayCourse(body, key){
+  const start=dayStartMs(...parts(key)), end=start+DAY, ev=bodyEvents(body, start+DAY/2, 1, 1);
+  const events=ev.filter(e=>e.t>=start && e.t<end), segs=[];
+  let from = ev.filter(e=>e.t<start).pop()?.type==="rise" ? start : null;
+  for (const e of events) {
+    if (e.type==="rise") from=e.t;
+    else if (from!=null) { segs.push([from,e.t]); from=null; }
   }
-  const a=ev[Math.max(i,0)];
-  return {E:((PH_E[a.code]+(t-a.t)/SYN*360)%360+360)%360, est:true};
+  if (from!=null) segs.push([from,end]);
+  return {segs, events, calc:riseSetDay(body,key).calc};
+}
+
+// Élongation estimée (0° à la nouvelle lune, 180° à la pleine lune) : interpolation entre les deux phases
+// qui encadrent t ; l'illumination qui en découle est juste à environ 2 % près.
+function elongation(t){
+  const ev=phaseList(t-10*DAY, t+10*DAY), i=ev.findIndex(e=>e.t>t), a=ev[i-1], b=ev[i];
+  if (!a || !b) return null;
+  let d=(PH_E[b.code]-PH_E[a.code]+360)%360 || 360;
+  d += 360*Math.round(((b.t-a.t)/SYN*360-d)/360); // phase manquante entre a et b
+  return (PH_E[a.code]+d*(t-a.t)/(b.t-a.t))%360;
 }
 const illum = E => (1-Math.cos(E*Math.PI/180))/2;
 
-// Dernière (dir = -1) ou prochaine (dir = 1) phase d'un type ; hors données, estimée d'après la plus proche
+// Dernière (dir = -1) ou prochaine (dir = 1) phase d'un type
 function phaseEvent(code, now, dir){
-  const same=sky.phases.filter(e=>e.code===code);
-  if (!same.length) return null;
-  const hit = dir>0 ? same.find(e=>e.t>now) : same.filter(e=>e.t<=now).pop();
-  if (hit && Math.abs(hit.t-now)<=SYN) return {t:hit.t, est:false};
-  const ref=same.reduce((a,b)=>Math.abs(b.t-now)<Math.abs(a.t-now)?b:a);
-  return {t:ref.t+(Math.floor((now-ref.t)/SYN)+(dir>0?1:0))*SYN, est:true};
+  const ev=phaseList(now-32*DAY, now+32*DAY).filter(e=>e.code===code);
+  return dir>0 ? ev.find(e=>e.t>now) : ev.filter(e=>e.t<=now).pop();
 }
-function phaseName(now, E){
-  const today=sky.phases.find(e=>e.day===muKey(now));
-  if (today) return PH_NAME[today.code];
+// Phase d'un jour : élongation à midi et phase principale éventuelle ce jour-là
+function dayPhase(key){
+  const noon=dayStartMs(...parts(key))+DAY/2;
+  return {E:elongation(noon), ph:phaseList(noon-DAY, noon+DAY).find(e=>e.day===key)};
+}
+function phaseName(E, ph){
+  if (ph) return PH_NAME[ph.code];
   return E<90?"Premier croissant":E<180?"Gibbeuse croissante":E<270?"Gibbeuse décroissante":"Dernier croissant";
 }
 
+// Vives-eaux : les 3 jours consécutifs de plus fort marnage entre l'avant-veille et le surlendemain de chaque
+// nouvelle ou pleine lune (sans prédictions de marées : la veille, le jour et le lendemain).
+// Mortes-eaux : la veille, le jour et le lendemain de chaque quartier.
+function tideSeasons(){
+  if (seasonsCache) return seasonsCache;
+  const byDay={}, springs=[], range=k=>days[dayIndex[k]]?.range;
+  if (days.length) for (const p of phaseList(days[0].start-4*DAY, days[days.length-1].start+5*DAY)) {
+    if (p.code==="FQ" || p.code==="LQ") { for (const i of [-1,0,1]) byDay[addDays(p.day,i)]="ME"; continue; }
+    let best=null;
+    for (let s=-2; s<=1; s++) {
+      const keys=[s,s+1,s+2].map(i=>addDays(p.day,i)), rs=keys.map(range);
+      if (rs.some(r=>r==null)) continue;
+      const sum=rs[0]+rs[1]+rs[2], dist=Math.abs(dayStartMs(...parts(keys[1]))+DAY/2-p.t-DAY);
+      if (!best || sum>best.sum || (sum===best.sum && dist<best.dist)) best={keys, sum, dist, max:Math.max(...rs)};
+    }
+    const keys = best ? best.keys : [-1,0,1].map(i=>addDays(p.day,i));
+    for (const k of keys) byDay[k]="VE";
+    springs.push({from:keys[0], to:keys[2], phase:p, max:best?.max});
+  }
+  return seasonsCache = {byDay, springs};
+}
+const SEASON = {VE:"vives-eaux", ME:"mortes-eaux"};
+
 const hhmm = t => { const x=new Date(t+MU); return `${pad(x.getUTCHours())}:${pad(x.getUTCMinutes())}`; };
 const dayMonth = t => { const x=new Date(t+MU); return `${x.getUTCDate()} ${MOS[x.getUTCMonth()]}`; };
+const keyDay = key => dayMonth(dayStartMs(...parts(key))+DAY/2);
 const fmtWhen = t => `${WD[new Date(t+MU).getUTCDay()]} ${dayMonth(t)} · ${hhmm(t)}`;
 function fmtSpan(ms){ const h=Math.floor(ms/36e5); return h<24 ? fmtDur(ms) : `${Math.floor(h/24)} j${h%24?` ${h%24} h`:""}`; }
 function atDay(t, now){
   const k=muKey(t), d=k===muKey(now)?"À":k===muKey(now+DAY)?"Demain à":k===muKey(now-DAY)?"Hier à":`Le ${dayMonth(t)} à`;
   return `${d} ${hhmm(t)}`;
+}
+
+// Ligne « vives-eaux » du panneau des marées : période en cours ou prochaine
+function springLine(){
+  const tk=todayKey(), sp=tideSeasons().springs.find(s=>s.to>=tk);
+  if (!sp) return "";
+  const [a,b]=[sp.from,sp.to].map(keyDay), when = a.split(" ")[1]===b.split(" ")[1] ? `${parseInt(a)} au ${b}` : `${a} au ${b}`;
+  return `<div class="next">${sp.from<=tk ? `Vives-eaux en cours, jusqu'au <b>${b}</b>` : `Prochaines vives-eaux du <b>${when}</b>`}
+    (${PH_NAME[sp.phase.code].toLowerCase()} le ${keyDay(sp.phase.day)})${sp.max?`, marnage jusqu'à ${sp.max} cm`:""}</div>`;
 }
 
 const SUN_ICO = `<svg viewBox="0 0 24 24" style="width:20px;height:20px" aria-hidden="true"><circle cx="12" cy="12" r="4.6" fill="currentColor"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
@@ -520,50 +661,37 @@ function arcSvg(c, now, body){
   </svg>`;
 }
 
-function skyMissing(ev, now){
-  if (skyState==="loading") return "Chargement…";
-  if (skyState==="error") return "Données indisponibles pour le moment. Vérifiez la connexion puis rouvrez l'application.";
-  if (!ev.length) return "Pas encore de données : elles arriveront avec la prochaine mise à jour.";
-  const d=t=>`${dayMonth(t)} ${new Date(t+MU).getUTCFullYear()} à ${hhmm(t)}`;
-  if (now<ev[0].t) return `Les données publiées commencent le ${d(ev[0].t)}.`;
-  if (now>ev[ev.length-1].t) return `Hors période : les données publiées s'arrêtent le ${d(ev[ev.length-1].t)}. La suite sera ajoutée dès sa publication par Météo Maurice.`;
-  return "Données manquantes pour cette période.";
-}
-
 function renderBody(which){
-  const el=document.getElementById(which), isSun=which==="sun", ev=sky[which];
-  const now=muNow(), c=course(ev,now), tk=todayKey(), today=(isSun?sky.sunDay:sky.moonDay)[tk], e=isSun?"":"e";
+  const el=document.getElementById(which), isSun=which==="sun", e=isSun?"":"e", name=isSun?"Soleil":"Lune";
+  const now=muNow(), c=skyState==="loading" ? null : course(which,now);
+  if (!c){ el.innerHTML=`<div class="astro-head"><h2>${name}</h2></div><div class="next">${skyState==="loading"?"Chargement…":"Données indisponibles pour le moment."}</div>`; return; }
+  const tk=todayKey(), today=riseSetDay(which,tk), mark=ev=>ev.calc ? ` · <span class="calc">calculé</span>` : "";
   const time=(v,what)=> v ? `<b>${v}</b>` : `<b title="Pas de ${what} de lune ce jour-là">—</b>`;
-  const head=`<div class="astro-head"><h2>${isSun?"Soleil":"Lune"}</h2>${today?`<span>Lever ${time(today.rise,"lever")} · Coucher ${time(today.set,"coucher")}</span>`:""}</div>`;
-  if (!c){ el.innerHTML=`${head}<div class="next">${skyMissing(ev,now)}</div>`; return; }
-  const ph=isSun ? null : elongation(now); // phase : uniquement si les heures des phases sont connues
+  const head=`<div class="astro-head"><h2>${name}</h2><span>Lever ${time(today.rise,"lever")} · Coucher ${time(today.set,"coucher")}${today.calc?` · ${CALC}`:""}</span></div>`;
+  const E=isSun ? null : elongation(now); // phase : uniquement si les heures des phases sont connues
   const ico = isSun ? `<span class="ico${c.up?"":" off"}" aria-hidden="true">${SUN_ICO}</span>`
-                    : ph ? `<span class="ico moonico">${moonSvg(ph.E,30)}</span>` : `<span class="ico off" aria-hidden="true">☾</span>`;
+                    : E!=null ? `<span class="ico moonico">${moonSvg(E,30)}</span>` : `<span class="ico off" aria-hidden="true">☾</span>`;
   const sub = isSun ? (c.up ? `${Math.round((now-c.from.t)/(c.to.t-c.from.t)*100)} % de la journée écoulée` : `Nuit de ${fmtDur(c.to.t-c.from.t)}`)
-                    : ph ? `${phaseName(now,ph.E)}, ≈ ${Math.round(illum(ph.E)*100)} % éclairée` : "";
-  const body = (x,y)=>`<circle class="halo" cx="${x}" cy="${y}" r="15"/>` + (ph
-    ? `<g class="moon" transform="translate(${x-10} ${y-10}) scale(.5)">${moonDisc(ph.E)}</g>`
+                    : E!=null ? `${phaseName(E, dayPhase(tk).ph)}, ≈ ${Math.round(illum(E)*100)} % éclairée` : "";
+  const body = (x,y)=>`<circle class="halo" cx="${x}" cy="${y}" r="15"/>` + (E!=null
+    ? `<g class="moon" transform="translate(${x-10} ${y-10}) scale(.5)">${moonDisc(E)}</g>`
     : `<circle class="disc" cx="${x}" cy="${y}" r="8"/>`);
   const [a,b] = c.up ? ["Depuis le lever","Avant le coucher"] : ["Depuis le coucher","Avant le lever"];
-  const [y,m,d]=tk.split("-").map(Number), len=today?.rise && today?.set ? toMs(y,m,d,today.set)-toMs(y,m,d,today.rise) : 0;
+  const [y,m,d]=parts(tk), len=today.rise && today.set ? toMs(y,m,d,today.set)-toMs(y,m,d,today.rise) : 0;
   el.innerHTML = `${head}
-    <div class="state">${ico}<div>${isSun?"Soleil":"Lune"} ${c.up?`levé${e}`:`couché${e}`}${sub?`<small>${sub}</small>`:""}</div></div>
+    <div class="state">${ico}<div>${name} ${c.up?`levé${e}`:`couché${e}`}${sub?`<small>${sub}</small>`:""}</div></div>
     ${arcSvg(c,now,body)}
     <div class="duo">
-      <div><span>${a}</span><b>${fmtDur(now-c.from.t)}</b><em>${atDay(c.from.t,now)}</em></div>
-      <div><span>${b}</span><b>${fmtDur(c.to.t-now)}</b><em>${atDay(c.to.t,now)}</em></div>
+      <div><span>${a}</span><b>${fmtDur(now-c.from.t)}</b><em>${atDay(c.from.t,now)}${mark(c.from)}</em></div>
+      <div><span>${b}</span><b>${fmtDur(c.to.t-now)}</b><em>${atDay(c.to.t,now)}${mark(c.to)}</em></div>
     </div>
     ${isSun&&len>0?`<div class="astro-foot">Durée du jour aujourd'hui : <b>${fmtDur(len)}</b></div>`:""}`;
 }
 
 function lunation(now, a, b){
   const span=b.t-a.t, pos=t=>`${Math.min(100,Math.max(0,(t-a.t)/span*100)).toFixed(2)}%`;
-  const marks=[{code:"NM", t:a.t}];
-  for (const code of ["FQ","FM","LQ"]) {
-    const p=sky.phases.find(e=>e.code===code && e.t>a.t && e.t<b.t);
-    marks.push({code, t:p ? p.t : a.t+span*PH_E[code]/360});
-  }
-  marks.push({code:"NM", t:b.t});
+  const inner=phaseList(a.t+1, b.t-1);
+  const marks=[{code:"NM", t:a.t}, ...["FQ","FM","LQ"].map(code=>({code, t:inner.find(e=>e.code===code)?.t ?? a.t+span*PH_E[code]/360})), {code:"NM", t:b.t}];
   return `<div class="luna" role="img" aria-label="Cycle lunaire du ${dayMonth(a.t)} au ${dayMonth(b.t)}">
     <div class="luna-track"><i style="width:${pos(now)}"></i></div>
     ${marks.map(m=>`<div class="luna-mark" style="left:${pos(m.t)}" title="${PH_NAME[m.code]} : ${fmtWhen(m.t)}">${moonSvg(PH_E[m.code],14)}<span>${dayMonth(m.t)}</span></div>`).join("")}
@@ -572,20 +700,19 @@ function lunation(now, a, b){
 }
 
 function renderPhase(){
-  const el=document.getElementById("phase"), now=muNow(), e=elongation(now);
-  if (!e){ el.innerHTML=`<div class="phase-main"><div><h2>Phase de la Lune</h2><div class="next">${skyMissing(sky.phases,now)}</div></div></div>`; return; }
-  const today=sky.phases.find(p=>p.day===todayKey());
-  const lastNM=phaseEvent("NM",now,-1), nextNM=phaseEvent("NM",now,1);
-  const tile=(label,p,dir)=> p ? `<div><span>${label}</span><b>${p.est?`<i class="est">≈</i> `:""}${dir>0?"dans":"il y a"} ${fmtSpan(Math.abs(p.t-now))}</b><em>${fmtWhen(p.t)}${p.est?" (estimation)":""}</em></div>` : "";
+  const el=document.getElementById("phase"), now=muNow(), E=skyState==="loading" ? null : elongation(now);
+  if (E==null){ el.innerHTML=`<div class="phase-main"><div><h2>Phase de la Lune</h2><div class="next">${skyState==="loading"?"Chargement…":"Données indisponibles pour le moment."}</div></div></div>`; return; }
+  const today=dayPhase(todayKey()).ph, lastNM=phaseEvent("NM",now,-1), nextNM=phaseEvent("NM",now,1);
+  const tile=(label,p,dir)=> p ? `<div><span>${label}</span><b>${dir>0?"dans":"il y a"} ${fmtSpan(Math.abs(p.t-now))}</b><em>${fmtWhen(p.t)}${p.calc?" · calculé":""}</em></div>` : "";
   el.innerHTML = `
     <div class="phase-main">
-      ${moonSvg(e.E,96)}
+      ${moonSvg(E,96)}
       <div>
         <h2>Phase de la Lune</h2>
-        <div class="phase-name">${phaseName(now,e.E)}</div>
-        <div class="bigh">≈ ${Math.round(illum(e.E)*100)}<small>%</small></div>
-        <div class="next">éclairée · lune ${e.E<180?"croissante":"décroissante"}</div>
-        ${today?`<div class="next">${PH_NAME[today.code]} aujourd'hui à <b>${today.time}</b></div>`:""}
+        <div class="phase-name">${phaseName(E, today)}</div>
+        <div class="bigh">≈ ${Math.round(illum(E)*100)}<small>%</small></div>
+        <div class="next">éclairée · lune ${E<180?"croissante":"décroissante"}</div>
+        ${today?`<div class="next">${PH_NAME[today.code]} aujourd'hui à <b>${today.time}</b>${today.calc?` ${CALC}`:""}</div>`:""}
       </div>
     </div>
     <div class="phase-side">
@@ -598,6 +725,23 @@ function renderPhase(){
 }
 function renderSky(){ renderBody("sun"); renderBody("moon"); renderPhase(); }
 
+/* ---------- Calendrier lunaire ---------- */
+let calMonth = null; // "AAAA-MM" affiché ; null = mois en cours
+function renderCal(){
+  const k=calMonth||todayKey().slice(0,7), [y,m]=parts(k), tk=todayKey(), astro=skyState!=="loading";
+  const n=new Date(Date.UTC(y,m,0)).getUTCDate(), lead=(new Date(Date.UTC(y,m-1,1)).getUTCDay()+6)%7;
+  const seasons=astro ? tideSeasons().byDay : {};
+  document.getElementById("calTitle").innerHTML = `${MO[pad(m)][0].toUpperCase()+MO[pad(m)].slice(1)} ${y}<span>Calendrier lunaire${astro && !pub.phaseMonths.has(k) ? " · phases calculées" : ""}</span>`;
+  let s=["lun.","mar.","mer.","jeu.","ven.","sam.","dim."].map(w=>`<div class="cal-wd">${w}</div>`).join("") + "<div></div>".repeat(lead);
+  for (let d=1; d<=n; d++) {
+    const key=`${k}-${pad(d)}`, {E,ph}=astro ? dayPhase(key) : {E:null}, tide=dayIndex[key]!=null;
+    const what = E==null ? "" : `${phaseName(E,ph)}${ph?` à ${ph.time}`:`, ${Math.round(illum(E)*100)} %`}${seasons[key]==="VE"?" · vives-eaux":""}`;
+    s += `<button class="cal-day${key===tk?" today":""}${seasons[key]==="VE"?" ve":""}${key===selected?" sel":""}" data-k="${key}"${tide?"":" disabled"} title="${d} ${MO[pad(m)]} : ${what}${tide?"":" (pas de prédictions de marées)"}">
+      <span class="n">${d}</span>${E!=null?moonSvg(E,24):""}<span class="p">${ph?`${PH_SHORT[ph.code]}<i> ${ph.time}</i>`:""}</span></button>`;
+  }
+  document.getElementById("cal").innerHTML = s;
+}
+
 let skyFetch=0, skyStamp=null;
 async function loadSky(){
   const res = await fetch("data/sun_moon.json",{cache:"no-cache"});
@@ -607,7 +751,12 @@ async function loadSky(){
   const stamp = JSON.stringify([data.sun,data.moon,data.phases]);
   if (stamp!==skyStamp){ skyStamp=stamp; buildSky(data); }
   skyState = "ok";
-  renderSky();
+  renderAstro();
+}
+// Tout ce qui dépend du soleil et de la lune (panneaux, courbe, tableau, calendrier)
+function renderAstro(){
+  renderSky(); renderCal();
+  if (days.length){ renderNow(); renderChart(); renderTable(); }
 }
 
 function syncControls(){
@@ -616,7 +765,7 @@ function syncControls(){
 }
 function select(key, scroll){
   selected=key; month=days[dayIndex[key]].month;
-  syncControls(); renderChart(); renderTable();
+  syncControls(); renderChart(); renderTable(); renderCal();
   if (scroll) document.getElementById("chartPanel").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
 }
 
@@ -656,6 +805,7 @@ async function loadData(){
   if (stamp===lastStamp){ renderMeta(); return; }
   lastStamp = stamp;
   build(data.months||{});
+  seasonsCache = null;
   if (!days.length) throw new Error("vide");
   renderMeta();
   const tk=todayKey();
@@ -668,22 +818,30 @@ loadData().catch(err=>{
   b.innerHTML="<b>Impossible de charger les marées.</b> Vérifiez la connexion puis rouvrez l'application.";
   console.error(err);
 });
-renderSky();
-loadSky().catch(err=>{
-  if (skyState!=="ok"){ skyState="error"; renderSky(); }
+renderSky(); renderCal();
+loadSky().catch(err=>{ // sans les données de Météo Maurice, tout est calculé
+  if (skyState!=="ok"){ skyState="error"; renderAstro(); }
   console.error(err);
 });
+document.getElementById("cal").addEventListener("click",e=>{ const b=e.target.closest("button[data-k]"); if (b && !b.disabled) select(b.dataset.k,true); });
+for (const [id,n] of [["calPrev",-1],["calNext",1]])
+  document.getElementById(id).onclick=()=>{ calMonth=nextMonth(calMonth||todayKey().slice(0,7), n); renderCal(); };
+// Chaque minute, et au retour dans l'application : temps réel ; au changement de jour, tableau et calendrier aussi
+let shownDay=todayKey();
+function tick(){
+  const newDay=todayKey()!==shownDay; shownDay=todayKey();
+  if (days.length){ renderNow(); renderChart(); if (newDay) renderTable(); }
+  renderSky(); if (newDay) renderCal();
+}
 document.addEventListener("visibilitychange",()=>{
   if (document.visibilityState!=="visible") return;
-  renderSky();
+  tick();
   if (Date.now()-skyFetch > 6*36e5) loadSky().catch(()=>{});
-  if (!days.length) return;
-  renderNow(); renderChart();
-  if (Date.now()-lastFetch > 6*36e5) loadData().catch(()=>{});
+  if (days.length && Date.now()-lastFetch > 6*36e5) loadData().catch(()=>{});
 });
 addEventListener("online",()=>{ loadData().catch(()=>{}); loadSky().catch(()=>{}); });
 addEventListener("resize",()=>{clearTimeout(window._rz);window._rz=setTimeout(()=>days.length&&renderChart(),150);});
-setInterval(()=>{ if (days.length){ renderNow(); renderChart(); } renderSky(); }, 60000);
+setInterval(tick, 60000);
 
 if ("serviceWorker" in navigator) {
   addEventListener("load",()=>navigator.serviceWorker.register("sw.js").then(r=>r.update()).catch(()=>{}));

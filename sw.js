@@ -1,10 +1,11 @@
 // Service worker — Marées Maurice
 // Coquille de l'app : servie depuis le cache, rafraîchie en arrière-plan.
 // Données (data/*.json) : réseau d'abord, cache si hors ligne.
-const VERSION = "marees-v2";
+const VERSION = "marees-v3";
 const SHELL = [
   "./",
   "index.html",
+  "astro.js",
   "manifest.webmanifest",
   "data/tides.json",
   "data/sun_moon.json",

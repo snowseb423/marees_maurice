@@ -2,8 +2,8 @@ name: Mise à jour des marées, du soleil et de la lune
 
 on:
   schedule:
-    # Le 1er de chaque mois à 03:00 UTC (07:00 à Maurice)
-    - cron: "0 3 1 * *"
+    # Le 1er et le 15 de chaque mois à 03:00 UTC (07:00 à Maurice)
+    - cron: "0 3 1,15 * *"
   workflow_dispatch: {}   # bouton « Run workflow » pour lancer à la main
 
 permissions:
