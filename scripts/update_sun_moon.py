@@ -287,29 +287,38 @@ def month_for(c: int, line: list[str], row_months: dict[int, str], mcols: dict[i
 
 # ---------- Contrôles de cohérence ----------
 
-def check_days(months: dict[str, list], label: str) -> None:
+def complete_months(months: dict[str, list], label: str) -> dict[str, list]:
+    """Garde les mois dont tous les jours sont présents (un mois partiel est ignoré, et signalé)."""
     if not months:
         raise ValueError("aucun tableau reconnu")
+    full = {}
     for key, rows in months.items():
         y, m = map(int, key.split("-"))
-        if [r[0] for r in rows] != list(range(1, calendar.monthrange(y, m)[1] + 1)):
-            raise ValueError(f"{key} : jours manquants ou en trop dans le tableau {label}")
+        if [r[0] for r in rows] == list(range(1, calendar.monthrange(y, m)[1] + 1)):
+            full[key] = rows
+        else:
+            print(f"{label} : {key} incomplet ({len(rows)} jours lus), ignoré.", file=sys.stderr)
+    if not full:
+        raise ValueError("aucun mois complet")
+    return full
 
 
-def check_sun(months: dict[str, list]) -> None:
-    check_days(months, "du soleil")
+def check_sun(months: dict[str, list]) -> dict[str, list]:
+    months = complete_months(months, LABELS["sun"])
     for key, rows in months.items():
         for d, rise, sset in rows:
             # À Maurice, le soleil se lève entre 5 h 15 et 7 h et se couche entre 17 h 30 et 19 h.
             if not (rise and sset and "04:45" <= rise <= "07:30" and "17:00" <= sset <= "19:30"):
                 raise ValueError(f"{key}-{d:02d} : lever {rise} / coucher {sset} invraisemblables")
+    return months
 
 
-def check_moon(months: dict[str, list]) -> None:
-    check_days(months, "de la lune")
+def check_moon(months: dict[str, list]) -> dict[str, list]:
+    months = complete_months(months, LABELS["moon"])
     for key, rows in months.items():
         if sum(not r[1] for r in rows) > 2 or sum(not r[2] for r in rows) > 2:
             raise ValueError(f"{key} : trop de jours sans lever ou sans coucher de lune")
+    return months
 
 
 def phase_events(months: dict[str, list]) -> list[tuple[datetime, str]]:
@@ -317,7 +326,7 @@ def phase_events(months: dict[str, list]) -> list[tuple[datetime, str]]:
                   for k, rows in months.items() for d, t, code in rows)
 
 
-def check_phases(months: dict[str, list]) -> None:
+def check_phases(months: dict[str, list]) -> dict[str, list]:
     if not months:
         raise ValueError("aucun tableau reconnu")
     for key, rows in months.items():
@@ -330,6 +339,7 @@ def check_phases(months: dict[str, list]) -> None:
             raise ValueError(f"phases dans le désordre : {c0} le {t0:%d/%m %H:%M} puis {c1} le {t1:%d/%m %H:%M}")
         if CYCLE[(CYCLE.index(c0) + 1) % 4] == c1 and not 5.5 <= gap <= 9.5:
             raise ValueError(f"écart invraisemblable entre {c0} ({t0:%d/%m}) et {c1} ({t1:%d/%m})")
+    return months
 
 
 def check_moon_vs_phases(moon: dict[str, list], phases: dict[str, list]) -> None:
@@ -393,8 +403,7 @@ def main() -> int:
             ok = False
             continue
         try:
-            months = PARSE[name](html, today)
-            CHECK[name](months)
+            months = CHECK[name](PARSE[name](html, today))
         except ValueError as e:
             print(f"{LABELS[name]} : {e} — données existantes conservées.\n{dump(html)}", file=sys.stderr)
             ok = False

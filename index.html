@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Horaires et hauteurs des marées à l'île Maurice, d'après les prédictions de Météo Maurice.">
+<meta name="description" content="Marées, lever et coucher du soleil et de la lune, phases de la Lune à l'île Maurice, d'après Météo Maurice.">
 <meta name="theme-color" content="#EEF3F4" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#071820" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
@@ -22,6 +22,8 @@
   --bg:#EEF3F4; --surface:#FFFFFF; --surface-2:#F5F9FA; --ink:#0D2330; --muted:#587080; --line:#D5E0E4;
   --accent:#0B7285; --accent-soft:rgba(11,114,133,.14); --high:#1D5FA8; --low:#A86A12;
   --now:#D6453D; --sel:#0B7285;
+  --sun:#D97706; --sun-soft:rgba(217,119,6,.14); --moon:#6A72B8;
+  --moon-dark:#1E3442; --moon-rim:#3A5566; --moon-lit:#F4EBCB;
   --f-display:"Sora",system-ui,sans-serif; --f-body:"IBM Plex Sans",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 }
 @media (prefers-color-scheme: dark){
@@ -29,12 +31,14 @@
     color-scheme:dark;
     --bg:#071820; --surface:#0E2430; --surface-2:#12303D; --ink:#E4EFF2; --muted:#8EA7B2; --line:#1F3B48;
     --accent:#45BCC8; --accent-soft:rgba(69,188,200,.16); --high:#79AEF0; --low:#E3AC52; --now:#FF6B61; --sel:#45BCC8;
+    --sun:#FBBF24; --sun-soft:rgba(251,191,36,.16); --moon:#AEB8F0; --moon-dark:#04121A; --moon-rim:#2E4A58;
   }
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
   --bg:#071820; --surface:#0E2430; --surface-2:#12303D; --ink:#E4EFF2; --muted:#8EA7B2; --line:#1F3B48;
   --accent:#45BCC8; --accent-soft:rgba(69,188,200,.16); --high:#79AEF0; --low:#E3AC52; --now:#FF6B61; --sel:#45BCC8;
+  --sun:#FBBF24; --sun-soft:rgba(251,191,36,.16); --moon:#AEB8F0; --moon-dark:#04121A; --moon-rim:#2E4A58;
 }
 *{box-sizing:border-box}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -121,11 +125,70 @@ tr.today td:first-child{box-shadow:inset 3px 0 0 var(--now)}
 .range span{font-family:var(--f-mono);font-size:12px;width:44px;text-align:right}
 .empty{padding:24px 16px;color:var(--muted);text-align:center}
 .note{font-size:13px;color:var(--muted);max-width:70ch}
+.note a{color:var(--accent)}
 
+/* Soleil et lune */
+.sky{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.astro{padding:16px 20px 18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.astro-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:2px 12px}
+.astro h2,.phase h2{margin:0;font-family:var(--f-mono);font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.astro-head span{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.astro-head span b{color:var(--ink);font-weight:500}
+.astro .state{line-height:1.2}
+.astro .state small{display:block;margin-top:2px;font-family:var(--f-body);font-size:14px;font-weight:400;color:var(--muted)}
+.ico{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--sun-soft);color:var(--sun)}
+.ico.off{background:var(--surface-2);color:var(--muted)}
+.ico.moonico{background:none}
+.arc{max-width:400px;width:100%;margin:0 auto;overflow:visible}
+.arc .horizon{stroke:var(--muted);stroke-width:1.5;opacity:.55}
+.arc .course{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:2 5;opacity:.6}
+.arc .done{fill:none;stroke:var(--sun);stroke-width:3;stroke-linecap:round}
+#moon .arc .done{stroke:var(--moon)}
+.arc .low{opacity:.4}
+.arc .halo{fill:var(--sun);opacity:.2}
+.arc .disc{fill:var(--sun)}
+#moon .arc .halo,#moon .arc .disc{fill:var(--moon)}
+.duo,.quad{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.duo>div,.quad>div{display:flex;flex-direction:column;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;min-width:0}
+.duo>div>span,.quad>div>span{flex:1;font-size:13px;line-height:1.35;color:var(--muted)}
+.duo b,.quad b{display:block;font-family:var(--f-display);font-weight:600;font-size:24px;line-height:1.3;letter-spacing:-.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.quad b{font-size:20px}
+.duo em,.quad em{font-style:normal;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.astro-foot{font-size:13px;color:var(--muted)}
+.astro-foot b{color:var(--ink);font-weight:600}
+.moon .moon-dark{fill:var(--moon-dark);stroke:var(--moon-rim);stroke-width:1.5}
+.moon .moon-lit{fill:var(--moon-lit)}
+.phase{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr)}
+.phase-main{padding:20px 22px;display:flex;align-items:center;gap:20px;border-right:1px solid var(--line)}
+.phase-main .moon{flex:none}
+.phase-name{font-family:var(--f-display);font-weight:600;font-size:22px;line-height:1.2;margin:4px 0 2px}
+.phase-side{padding:16px 20px 18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.luna{position:relative;height:50px;margin:0 26px}
+.luna-track{position:absolute;left:0;right:0;top:9px;height:6px;border-radius:3px;background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--line)}
+.luna-track i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:color-mix(in srgb,var(--moon) 55%,transparent)}
+.luna-mark{position:absolute;top:5px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:5px;font-family:var(--f-mono);font-size:11px;color:var(--muted);white-space:nowrap}
+.luna-mark .moon{display:block}
+.luna-now{position:absolute;top:12px;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--now);box-shadow:0 0 0 2px var(--surface)}
+.est{font-style:normal;font-weight:400;color:var(--muted)}
+
+@media (max-width:860px){
+  .phase{grid-template-columns:1fr}
+  .phase-main{border-right:0;border-bottom:1px solid var(--line)}
+}
+@media (max-width:760px){
+  .sky{grid-template-columns:1fr}
+}
 @media (max-width:640px){
   .now{grid-template-columns:1fr}
   .now-main{border-right:0;border-bottom:1px solid var(--line)}
+  .phase-main{padding:18px 20px}
   .bigh{font-size:46px}
+}
+@media (max-width:520px){
+  .quad{grid-template-columns:1fr;gap:8px}
+  .quad>div{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:12px}
+  .quad>div>span{grid-row:span 2}
+  .quad b,.quad em{text-align:right}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -154,6 +217,12 @@ tr.today td:first-child{box-shadow:inset 3px 0 0 var(--now)}
     <div class="chart-box"><svg id="chart" viewBox="0 0 720 260" role="img" aria-label="Courbe de marée du jour"></svg></div>
   </section>
 
+  <div class="sky">
+    <section class="panel astro" id="sun" aria-label="Soleil"></section>
+    <section class="panel astro" id="moon" aria-label="Lune"></section>
+  </div>
+  <section class="panel phase" id="phase" aria-label="Phase de la Lune"></section>
+
   <section class="panel">
     <div class="tbl-head">
       <div class="seg" role="group" aria-label="Mois">
@@ -179,6 +248,7 @@ tr.today td:first-child{box-shadow:inset 3px 0 0 var(--now)}
   </section>
 
   <p class="note">Hauteurs en centimètres au-dessus du zéro hydrographique ; une valeur négative signifie que la mer descend sous ce niveau de référence. La courbe entre deux extrêmes est une interpolation (sinusoïde) : les heures et hauteurs publiées font foi. Touchez une ligne du tableau pour afficher la courbe du jour.</p>
+  <p class="note">Lever et coucher du <a href="https://metservice.intnet.mu/sun-moon-and-tides-sunrise-sunset-mauritius.php" target="_blank" rel="noopener">soleil</a> et de la <a href="https://metservice.intnet.mu/sun-moon-and-tides-moonrise-moonset-mauritius.php" target="_blank" rel="noopener">lune</a>, heures des <a href="https://metservice.intnet.mu/sun-moon-and-tides-moon-phase.php" target="_blank" rel="noopener">phases</a> : Météo Maurice, heure locale. Le pourcentage d'illumination est estimé à partir des heures des phases (à environ 2 % près) ; les dates précédées de ≈ sont extrapolées hors de la période publiée. La Lune est dessinée telle qu'on la voit depuis l'hémisphère sud : croissante, elle est éclairée à gauche.</p>
 </div>
 
 <script>
@@ -341,6 +411,205 @@ function renderTable(){
     </tr>`;}).join("");
 }
 
+/* ---------- Soleil et lune ---------- */
+// Données : data/sun_moon.json (Météo Maurice), mis à jour chaque mois avec les marées.
+// sun, moon : { "AAAA-MM": [[jour, lever, coucher], …] } — null : pas de lever ou de coucher ce jour-là
+// phases : { "AAAA-MM": [[jour, heure, "NM" | "FQ" | "FM" | "LQ"], …] }
+const SYN = 29.530589*DAY;                    // mois synodique moyen
+const PH_E = {NM:0, FQ:90, FM:180, LQ:270};   // élongation Lune–Soleil de chaque phase (degrés)
+const PH_NAME = {NM:"Nouvelle lune", FQ:"Premier quartier", FM:"Pleine lune", LQ:"Dernier quartier"};
+const MOS = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+let sky = {sun:[], moon:[], phases:[], sunDay:{}, moonDay:{}}, skyState = "loading";
+
+function buildSky(data){
+  const riseSet = src => {
+    const ev=[], byDay={};
+    for (const key of Object.keys(src||{}).sort()) {
+      const [y,m]=key.split("-").map(Number);
+      for (const [d,rise,set] of src[key]) {
+        byDay[`${key}-${pad(d)}`]={rise,set};
+        if (rise) ev.push({t:toMs(y,m,d,rise), type:"rise", time:rise});
+        if (set) ev.push({t:toMs(y,m,d,set), type:"set", time:set});
+      }
+    }
+    return [ev.sort((a,b)=>a.t-b.t), byDay];
+  };
+  [sky.sun, sky.sunDay] = riseSet(data.sun);
+  [sky.moon, sky.moonDay] = riseSet(data.moon);
+  sky.phases = [];
+  for (const key of Object.keys(data.phases||{}).sort()) {
+    const [y,m]=key.split("-").map(Number);
+    for (const [d,time,code] of data.phases[key]) sky.phases.push({t:toMs(y,m,d,time), time, code, day:`${key}-${pad(d)}`});
+  }
+  sky.phases.sort((a,b)=>a.t-b.t);
+}
+
+// Course en cours : levé (du dernier lever au prochain coucher) ou couché (du dernier coucher au prochain lever)
+function course(ev, now){
+  let i=-1; while (i+1<ev.length && ev[i+1].t<=now) i++;
+  const prev=ev[i], next=ev[i+1];
+  if (!prev || !next || next.t-prev.t > 20*36e5) return null; // hors période ou trou dans les données
+  const to=ev.slice(i+1).find(e=>e.type!==prev.type);
+  return to ? {up:prev.type==="rise", from:prev, to} : null;
+}
+
+// Élongation estimée (0° à la nouvelle lune, 180° à la pleine lune) : interpolation entre deux phases
+// publiées, extrapolation au mois synodique moyen hors de la période.
+function elongation(t){
+  const ev=sky.phases; if (!ev.length) return null;
+  let i=-1; while (i+1<ev.length && ev[i+1].t<=t) i++;
+  if (i>=0 && i<ev.length-1){
+    const a=ev[i], b=ev[i+1];
+    let d=(PH_E[b.code]-PH_E[a.code]+360)%360 || 360;
+    d += 360*Math.round(((b.t-a.t)/SYN*360-d)/360); // phases manquantes entre a et b
+    return {E:(PH_E[a.code]+d*(t-a.t)/(b.t-a.t))%360, est:false};
+  }
+  const a=ev[Math.max(i,0)];
+  return {E:((PH_E[a.code]+(t-a.t)/SYN*360)%360+360)%360, est:true};
+}
+const illum = E => (1-Math.cos(E*Math.PI/180))/2;
+
+// Dernière (dir = -1) ou prochaine (dir = 1) phase d'un type ; hors données, estimée d'après la plus proche
+function phaseEvent(code, now, dir){
+  const same=sky.phases.filter(e=>e.code===code);
+  if (!same.length) return null;
+  const hit = dir>0 ? same.find(e=>e.t>now) : same.filter(e=>e.t<=now).pop();
+  if (hit && Math.abs(hit.t-now)<=SYN) return {t:hit.t, est:false};
+  const ref=same.reduce((a,b)=>Math.abs(b.t-now)<Math.abs(a.t-now)?b:a);
+  return {t:ref.t+(Math.floor((now-ref.t)/SYN)+(dir>0?1:0))*SYN, est:true};
+}
+function phaseName(now, E){
+  const today=sky.phases.find(e=>e.day===muKey(now));
+  if (today) return PH_NAME[today.code];
+  return E<90?"Premier croissant":E<180?"Gibbeuse croissante":E<270?"Gibbeuse décroissante":"Dernier croissant";
+}
+
+const hhmm = t => { const x=new Date(t+MU); return `${pad(x.getUTCHours())}:${pad(x.getUTCMinutes())}`; };
+const dayMonth = t => { const x=new Date(t+MU); return `${x.getUTCDate()} ${MOS[x.getUTCMonth()]}`; };
+const fmtWhen = t => `${WD[new Date(t+MU).getUTCDay()]} ${dayMonth(t)} · ${hhmm(t)}`;
+function fmtSpan(ms){ const h=Math.floor(ms/36e5); return h<24 ? fmtDur(ms) : `${Math.floor(h/24)} j${h%24?` ${h%24} h`:""}`; }
+function atDay(t, now){
+  const k=muKey(t), d=k===muKey(now)?"À":k===muKey(now+DAY)?"Demain à":k===muKey(now-DAY)?"Hier à":`Le ${dayMonth(t)} à`;
+  return `${d} ${hhmm(t)}`;
+}
+
+const SUN_ICO = `<svg viewBox="0 0 24 24" style="width:20px;height:20px" aria-hidden="true"><circle cx="12" cy="12" r="4.6" fill="currentColor"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+// Lune vue de l'hémisphère sud (Maurice) : croissante, elle est éclairée à gauche.
+function moonPath(E, cx, cy, r){
+  const left=E<180, tx=r*Math.abs(Math.cos(E*Math.PI/180)), term=(illum(E)<.5)===left?1:0;
+  return `M${cx},${cy-r}A${r},${r} 0 0 ${left?0:1} ${cx},${cy+r}A${tx.toFixed(2)},${r} 0 0 ${term} ${cx},${cy-r}Z`;
+}
+const moonDisc = E => `<circle cx="20" cy="20" r="18" class="moon-dark"/><path d="${moonPath(E,20,20,18)}" class="moon-lit"/>`;
+const moonSvg = (E, size) => `<svg class="moon" viewBox="0 0 40 40" style="width:${size}px;height:${size}px" aria-hidden="true">${moonDisc(E)}</svg>`;
+
+// Course schématique : au-dessus de l'horizon, du lever (à gauche) au coucher (à droite) ; en dessous, le retour.
+function arcSvg(c, now, body){
+  const W=340, base=80, x0=50, x1=W-50, cx=W/2, rx=(x1-x0)/2, ry=64, rl=18;
+  const f=Math.min(1,Math.max(0,(now-c.from.t)/(c.to.t-c.from.t)));
+  const th=c.up ? Math.PI*(1-f) : -Math.PI*f;
+  const px=(cx+rx*Math.cos(th)).toFixed(1), py=(base-(c.up?ry:rl)*Math.sin(th)).toFixed(1);
+  const [rise,set]=c.up ? [c.from,c.to] : [c.to,c.from];
+  return `<svg class="arc" viewBox="0 0 ${W} ${base+rl+8}" aria-hidden="true">
+    <path class="course" d="M${x0},${base}A${rx},${ry} 0 0 1 ${x1},${base}"/>
+    <path class="course low" d="M${x1},${base}A${rx},${rl} 0 0 1 ${x0},${base}"/>
+    ${c.up ? `<path class="done" d="M${x0},${base}A${rx},${ry} 0 0 1 ${px},${py}"/>` : `<path class="done low" d="M${x1},${base}A${rx},${rl} 0 0 1 ${px},${py}"/>`}
+    <line class="horizon" x1="${x0-8}" x2="${x1+8}" y1="${base}" y2="${base}"/>
+    <text class="axis" x="${x0-12}" y="${base+4}" text-anchor="end">${rise.time}</text>
+    <text class="axis" x="${x1+12}" y="${base+4}">${set.time}</text>
+    <g${c.up?"":` class="low"`}>${body(+px,+py)}</g>
+  </svg>`;
+}
+
+function skyMissing(ev, now){
+  if (skyState==="loading") return "Chargement…";
+  if (skyState==="error") return "Données indisponibles pour le moment. Vérifiez la connexion puis rouvrez l'application.";
+  if (!ev.length) return "Pas encore de données : elles arriveront avec la prochaine mise à jour.";
+  const d=t=>`${dayMonth(t)} ${new Date(t+MU).getUTCFullYear()} à ${hhmm(t)}`;
+  if (now<ev[0].t) return `Les données publiées commencent le ${d(ev[0].t)}.`;
+  if (now>ev[ev.length-1].t) return `Hors période : les données publiées s'arrêtent le ${d(ev[ev.length-1].t)}. La suite sera ajoutée dès sa publication par Météo Maurice.`;
+  return "Données manquantes pour cette période.";
+}
+
+function renderBody(which){
+  const el=document.getElementById(which), isSun=which==="sun", ev=sky[which];
+  const now=muNow(), c=course(ev,now), tk=todayKey(), today=(isSun?sky.sunDay:sky.moonDay)[tk], e=isSun?"":"e";
+  const time=(v,what)=> v ? `<b>${v}</b>` : `<b title="Pas de ${what} de lune ce jour-là">—</b>`;
+  const head=`<div class="astro-head"><h2>${isSun?"Soleil":"Lune"}</h2>${today?`<span>Lever ${time(today.rise,"lever")} · Coucher ${time(today.set,"coucher")}</span>`:""}</div>`;
+  if (!c){ el.innerHTML=`${head}<div class="next">${skyMissing(ev,now)}</div>`; return; }
+  const ph=isSun ? null : elongation(now); // phase : uniquement si les heures des phases sont connues
+  const ico = isSun ? `<span class="ico${c.up?"":" off"}" aria-hidden="true">${SUN_ICO}</span>`
+                    : ph ? `<span class="ico moonico">${moonSvg(ph.E,30)}</span>` : `<span class="ico off" aria-hidden="true">☾</span>`;
+  const sub = isSun ? (c.up ? `${Math.round((now-c.from.t)/(c.to.t-c.from.t)*100)} % de la journée écoulée` : `Nuit de ${fmtDur(c.to.t-c.from.t)}`)
+                    : ph ? `${phaseName(now,ph.E)}, ≈ ${Math.round(illum(ph.E)*100)} % éclairée` : "";
+  const body = (x,y)=>`<circle class="halo" cx="${x}" cy="${y}" r="15"/>` + (ph
+    ? `<g class="moon" transform="translate(${x-10} ${y-10}) scale(.5)">${moonDisc(ph.E)}</g>`
+    : `<circle class="disc" cx="${x}" cy="${y}" r="8"/>`);
+  const [a,b] = c.up ? ["Depuis le lever","Avant le coucher"] : ["Depuis le coucher","Avant le lever"];
+  const [y,m,d]=tk.split("-").map(Number), len=today?.rise && today?.set ? toMs(y,m,d,today.set)-toMs(y,m,d,today.rise) : 0;
+  el.innerHTML = `${head}
+    <div class="state">${ico}<div>${isSun?"Soleil":"Lune"} ${c.up?`levé${e}`:`couché${e}`}${sub?`<small>${sub}</small>`:""}</div></div>
+    ${arcSvg(c,now,body)}
+    <div class="duo">
+      <div><span>${a}</span><b>${fmtDur(now-c.from.t)}</b><em>${atDay(c.from.t,now)}</em></div>
+      <div><span>${b}</span><b>${fmtDur(c.to.t-now)}</b><em>${atDay(c.to.t,now)}</em></div>
+    </div>
+    ${isSun&&len>0?`<div class="astro-foot">Durée du jour aujourd'hui : <b>${fmtDur(len)}</b></div>`:""}`;
+}
+
+function lunation(now, a, b){
+  const span=b.t-a.t, pos=t=>`${Math.min(100,Math.max(0,(t-a.t)/span*100)).toFixed(2)}%`;
+  const marks=[{code:"NM", t:a.t}];
+  for (const code of ["FQ","FM","LQ"]) {
+    const p=sky.phases.find(e=>e.code===code && e.t>a.t && e.t<b.t);
+    marks.push({code, t:p ? p.t : a.t+span*PH_E[code]/360});
+  }
+  marks.push({code:"NM", t:b.t});
+  return `<div class="luna" role="img" aria-label="Cycle lunaire du ${dayMonth(a.t)} au ${dayMonth(b.t)}">
+    <div class="luna-track"><i style="width:${pos(now)}"></i></div>
+    ${marks.map(m=>`<div class="luna-mark" style="left:${pos(m.t)}" title="${PH_NAME[m.code]} : ${fmtWhen(m.t)}">${moonSvg(PH_E[m.code],14)}<span>${dayMonth(m.t)}</span></div>`).join("")}
+    <div class="luna-now" style="left:${pos(now)}" title="Maintenant"></div>
+  </div>`;
+}
+
+function renderPhase(){
+  const el=document.getElementById("phase"), now=muNow(), e=elongation(now);
+  if (!e){ el.innerHTML=`<div class="phase-main"><div><h2>Phase de la Lune</h2><div class="next">${skyMissing(sky.phases,now)}</div></div></div>`; return; }
+  const today=sky.phases.find(p=>p.day===todayKey());
+  const lastNM=phaseEvent("NM",now,-1), nextNM=phaseEvent("NM",now,1);
+  const tile=(label,p,dir)=> p ? `<div><span>${label}</span><b>${p.est?`<i class="est">≈</i> `:""}${dir>0?"dans":"il y a"} ${fmtSpan(Math.abs(p.t-now))}</b><em>${fmtWhen(p.t)}${p.est?" (estimation)":""}</em></div>` : "";
+  el.innerHTML = `
+    <div class="phase-main">
+      ${moonSvg(e.E,96)}
+      <div>
+        <h2>Phase de la Lune</h2>
+        <div class="phase-name">${phaseName(now,e.E)}</div>
+        <div class="bigh">≈ ${Math.round(illum(e.E)*100)}<small>%</small></div>
+        <div class="next">éclairée · lune ${e.E<180?"croissante":"décroissante"}</div>
+        ${today?`<div class="next">${PH_NAME[today.code]} aujourd'hui à <b>${today.time}</b></div>`:""}
+      </div>
+    </div>
+    <div class="phase-side">
+      ${lastNM&&nextNM ? lunation(now,lastNM,nextNM) : ""}
+      <div class="quad">
+        ${tile("Dernière nouvelle lune",lastNM,-1)}${tile("Prochaine pleine lune",phaseEvent("FM",now,1),1)}
+        ${tile("Dernière pleine lune",phaseEvent("FM",now,-1),-1)}${tile("Prochaine nouvelle lune",nextNM,1)}
+      </div>
+    </div>`;
+}
+function renderSky(){ renderBody("sun"); renderBody("moon"); renderPhase(); }
+
+let skyFetch=0, skyStamp=null;
+async function loadSky(){
+  const res = await fetch("data/sun_moon.json",{cache:"no-cache"});
+  if (!res.ok) throw new Error("HTTP "+res.status);
+  const data = await res.json();
+  skyFetch = Date.now();
+  const stamp = JSON.stringify([data.sun,data.moon,data.phases]);
+  if (stamp!==skyStamp){ skyStamp=stamp; buildSky(data); }
+  skyState = "ok";
+  renderSky();
+}
+
 function syncControls(){
   document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.m===month));
   document.querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed", b.dataset.f===filter));
@@ -399,14 +668,22 @@ loadData().catch(err=>{
   b.innerHTML="<b>Impossible de charger les marées.</b> Vérifiez la connexion puis rouvrez l'application.";
   console.error(err);
 });
+renderSky();
+loadSky().catch(err=>{
+  if (skyState!=="ok"){ skyState="error"; renderSky(); }
+  console.error(err);
+});
 document.addEventListener("visibilitychange",()=>{
-  if (document.visibilityState!=="visible" || !days.length) return;
+  if (document.visibilityState!=="visible") return;
+  renderSky();
+  if (Date.now()-skyFetch > 6*36e5) loadSky().catch(()=>{});
+  if (!days.length) return;
   renderNow(); renderChart();
   if (Date.now()-lastFetch > 6*36e5) loadData().catch(()=>{});
 });
-addEventListener("online",()=>loadData().catch(()=>{}));
+addEventListener("online",()=>{ loadData().catch(()=>{}); loadSky().catch(()=>{}); });
 addEventListener("resize",()=>{clearTimeout(window._rz);window._rz=setTimeout(()=>days.length&&renderChart(),150);});
-setInterval(()=>{ if (days.length){ renderNow(); renderChart(); } }, 60000);
+setInterval(()=>{ if (days.length){ renderNow(); renderChart(); } renderSky(); }, 60000);
 
 if ("serviceWorker" in navigator) {
   addEventListener("load",()=>navigator.serviceWorker.register("sw.js").then(r=>r.update()).catch(()=>{}));
